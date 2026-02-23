@@ -337,12 +337,12 @@ textarea.inp{resize:vertical;min-height:80px;}
       </div>
     </div>
     <div class="card">
-      <div class="ai-badge">AI DAILY SUMMARY</div>
+      <div class="ai-badge">DAILY SUMMARY</div>
       <div id="ai-summary-content">
         <div style="color:var(--mu);font-size:12px;line-height:1.6;">Tap the button below to get your personalised daily summary.</div>
       </div>
       <div class="btn-row">
-        <button class="btn btn-sm" onclick="generateAISummary()">✦ Generate Summary</button>
+        <button class="btn btn-sm" onclick="generateAISummary()">↻ Generate Summary</button>
       </div>
     </div>
     <div class="card">
@@ -585,17 +585,6 @@ textarea.inp{resize:vertical;min-height:80px;}
     <div class="settings-section">
       <div class="settings-title">Theme</div>
       <div class="theme-grid" id="settings-theme-grid"></div>
-    </div>
-    <div class="settings-section">
-      <div class="settings-title">AI Summary</div>
-      <div class="card">
-        <div class="field">
-          <div class="lbl">Anthropic API Key</div>
-          <input class="inp inp-sm" type="password" id="s-apikey" placeholder="sk-ant-..." oninput="saveApiKey()">
-          <div style="font-family:var(--mono);font-size:10px;color:var(--mu);margin-top:6px;line-height:1.5;">Your key is stored only on this device and never sent anywhere except directly to Anthropic. Get a key at <span style="color:var(--cy);">console.anthropic.com</span></div>
-        </div>
-        <div id="s-apikey-status" style="font-family:var(--mono);font-size:10px;margin-top:4px;"></div>
-      </div>
     </div>
   </div>
 
@@ -975,16 +964,9 @@ function makeMacroCards(macros){
 }
 
 // ============================================================
-// AI SUMMARY
+// SMART SUMMARY (rule-based, no API needed)
 // ============================================================
-async function generateAISummary(){
-  var apiKey=localStorage.getItem('tracker_apikey')||'';
-  if(!apiKey){
-    document.getElementById('ai-summary-content').innerHTML='<div class="ai-summary-text" style="color:var(--or);">⚠ No API key set. Go to Settings → AI Summary to add your Anthropic API key.</div>';
-    return;
-  }
-  var box=document.getElementById('ai-summary-content');
-  box.innerHTML='<div class="ai-summary-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px;">Generating your summary...</span></div>';
+function generateAISummary(){
   var day=getDay(todayStr());
   var S=D.settings;
   var isGym=day.isGymDay;
@@ -998,30 +980,83 @@ async function generateAISummary(){
   var carbGoal=isGym?S.gymCarb:S.restCarb;
   var fatGoal=isGym?S.gymFat:S.restFat;
   var deficit=S.maintenance+burned-cal;
-  var wts=D.weights.sort(function(a,b){return a.date.localeCompare(b.date);});
-  var curW=wts.length?wts[wts.length-1].val:S.weight;
-  var prompt='You are a supportive, knowledgeable fitness and nutrition coach. Give a brief, personalised daily summary for '+S.name+' ('+S.age+' yo, '+curW+'kg, goal: '+S.goal+'kg). Today is a '+(isGym?'GYM':'REST')+' day.\n\nMacros so far: Calories '+cal+'/'+calGoal+' kcal, Protein '+prot+'/'+protGoal+'g, Carbs '+carb+'/'+carbGoal+'g, Fat '+fat+'/'+fatGoal+'g.\nCalories burned: '+burned+' kcal. Deficit vs maintenance: '+(deficit>=0?'+':'')+Math.round(deficit)+' kcal.\n\nGive 3-4 sentences of honest, actionable, motivating feedback. Mention what they\'re doing well and what to focus on for the rest of the day. Keep it personal and direct. No bullet points.';
-  try{
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:prompt}]})
-    });
-    var data=await resp.json();
-    if(data.error){
-      box.innerHTML='<div class="ai-summary-text" style="color:var(--rd);">API Error: '+data.error.message+'</div>';
-      return;
-    }
-    var text=(data.content&&data.content[0]&&data.content[0].text)||'Unable to generate summary.';
-    box.innerHTML='<div class="ai-badge">AI SUMMARY</div><div class="ai-summary-text">'+text+'</div>';
-  }catch(e){
-    box.innerHTML='<div class="ai-summary-text" style="color:var(--mu);">Could not connect. Check your internet connection and try again.</div>';
+  var calPct=calGoal?Math.round((cal/calGoal)*100):0;
+  var protPct=protGoal?Math.round((prot/protGoal)*100):0;
+  var carbPct=carbGoal?Math.round((carb/carbGoal)*100):0;
+  var fatPct=fatGoal?Math.round((fat/fatGoal)*100):0;
+  var wts=(D.weights||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
+  var curW=wts.length?wts[wts.length-1].val:parseFloat(S.weight)||0;
+  var goalW=parseFloat(S.goal)||0;
+  var losing=goalW<curW;
+  var h=new Date().getHours();
+  var dayPart=h<12?'morning':h<17?'afternoon':'evening';
+  var lines=[];
+
+  // Nothing logged yet
+  if(cal===0&&prot===0){
+    if(isGym) lines.push('Gym day — nothing logged yet. Get your pre-workout nutrition in and start strong.');
+    else lines.push('Rest day — nothing logged yet. Stay consistent and get your first meal in.');
+    document.getElementById('ai-summary-content').innerHTML='<div class="ai-badge">DAILY SUMMARY</div><div class="ai-summary-text">'+lines.join(' ')+'</div>';
+    return;
   }
+
+  // Calorie status
+  if(calPct>=100){
+    if(calPct>=115) lines.push('You\'ve gone over your calorie goal by '+(cal-calGoal)+' kcal — be mindful with the rest of the '+dayPart+'.');
+    else lines.push('Calories are right on target at '+cal+'/'+calGoal+' kcal — solid.');
+  } else {
+    var calLeft=calGoal-cal;
+    if(calPct>=75) lines.push('Almost at your calorie goal — '+calLeft+' kcal to go.');
+    else lines.push('You\'re at '+calPct+'% of your calorie goal ('+cal+'/'+calGoal+' kcal) with '+calLeft+' kcal remaining.');
+  }
+
+  // Protein — most important macro
+  if(protPct>=100){
+    lines.push('Protein is nailed at '+prot+'g — great work.');
+  } else {
+    var protLeft=protGoal-prot;
+    if(protPct>=75) lines.push('Protein is close — just '+protLeft+'g to go to hit your '+protGoal+'g target.');
+    else if(protPct>=40) lines.push('Protein needs attention — '+prot+'g logged out of '+protGoal+'g. Try adding a high-protein meal or shake.');
+    else lines.push('Protein is low at '+prot+'g vs your '+protGoal+'g goal — prioritise protein in your next meal.');
+  }
+
+  // Carbs
+  if(carbPct>115) lines.push('Carbs are over your goal ('+carb+'g vs '+carbGoal+'g target).');
+  else if(carbPct>=85&&carbPct<=115) lines.push('Carbs are on track at '+carb+'g.');
+
+  // Fat
+  if(fatPct>120) lines.push('Fat is running high at '+fat+'g vs your '+fatGoal+'g target — watch added fats for the rest of the day.');
+
+  // Deficit
+  if(burned>0){
+    lines.push('With '+burned+' kcal burned, your true deficit is '+(deficit>=0?'+':'')+Math.round(deficit)+' kcal vs maintenance.');
+  } else if(deficit>=0){
+    lines.push('You\'re in a '+Math.round(deficit)+' kcal deficit vs your maintenance — '+(losing?'on track for your goal.':'above your maintenance target.'));
+  } else {
+    lines.push('You\'re '+Math.round(Math.abs(deficit))+' kcal over maintenance — '+(losing?'this will slow progress toward your goal.':'within your surplus target.'));
+  }
+
+  // Gym day session check
+  if(isGym){
+    var sessStates=D.sessStates||{};
+    var doneSess=Object.values(sessStates).filter(function(s){return s==='done';}).length;
+    var totalSess=D.program.length;
+    if(totalSess>0){
+      if(doneSess===0) lines.push('No gym sessions logged yet — get it done!');
+      else if(doneSess===totalSess) lines.push('All '+totalSess+' sessions complete this cycle — great work!');
+      else lines.push(doneSess+' of '+totalSess+' sessions done this cycle — keep the momentum.');
+    }
+  }
+
+  // Weight trend
+  if(wts.length>=2){
+    var prev=wts[wts.length-2];var curr=wts[wts.length-1];
+    var delta=+(curr.val-prev.val).toFixed(1);
+    if(delta<0) lines.push('Weight is trending down ('+delta+'kg since last weigh-in) — keep going.');
+    else if(delta>0&&losing) lines.push('Weight is up '+delta+'kg since last weigh-in — stay consistent.');
+  }
+
+  document.getElementById('ai-summary-content').innerHTML='<div class="ai-badge">DAILY SUMMARY</div><div class="ai-summary-text">'+lines.join(' ')+'</div>';
 }
 
 // ============================================================
