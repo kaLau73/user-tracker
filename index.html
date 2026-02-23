@@ -1729,6 +1729,7 @@ function saveApiKey(){
   else if(key.length>0){status.style.color='var(--or)';status.textContent='⚠ Key should start with sk-ant-';}
   else{status.style.color='var(--mu)';status.textContent='No key saved';}
 }
+function liveSettingSave(){
   var S=D.settings;
   var map={name:'s-name',age:'s-age',height:'s-height',goal:'s-goal',maintenance:'s-maint',
     gymCal:'s-gcal',gymProt:'s-gprot',gymCarb:'s-gcarb',gymFat:'s-gfat',
@@ -1758,16 +1759,15 @@ function renderAll(){
 // INIT
 // ============================================================
 load();
-initThemeSwatches('ob-theme-grid', function(id){D.settings.theme=id;});
+applyTheme(D.settings.theme||'vice');
+initThemeSwatches('ob-theme-grid',function(id){D.settings.theme=id;});
 
 if(D.settings&&D.settings.name){
   document.getElementById('onboard').style.display='none';
   document.getElementById('app').style.display='block';
-  applyTheme(D.settings.theme||'vice');
   renderAll();
 } else {
-  applyTheme('vice');
-  initThemeSwatches('ob-theme-grid',function(id){D.settings.theme=id;});
+  document.getElementById('onboard').style.display='flex';
 }
 
 // close more panel on outside tap
