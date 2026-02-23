@@ -586,7 +586,17 @@ textarea.inp{resize:vertical;min-height:80px;}
       <div class="settings-title">Theme</div>
       <div class="theme-grid" id="settings-theme-grid"></div>
     </div>
-  </div>
+    <div class="settings-section">
+      <div class="settings-title">AI Summary</div>
+      <div class="card">
+        <div class="field">
+          <div class="lbl">Anthropic API Key</div>
+          <input class="inp inp-sm" type="password" id="s-apikey" placeholder="sk-ant-..." oninput="saveApiKey()">
+          <div style="font-family:var(--mono);font-size:10px;color:var(--mu);margin-top:6px;line-height:1.5;">Your key is stored only on this device and never sent anywhere except directly to Anthropic. Get a key at <span style="color:var(--cy);">console.anthropic.com</span></div>
+        </div>
+        <div id="s-apikey-status" style="font-family:var(--mono);font-size:10px;margin-top:4px;"></div>
+      </div>
+    </div>
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
@@ -967,6 +977,11 @@ function makeMacroCards(macros){
 // AI SUMMARY
 // ============================================================
 async function generateAISummary(){
+  var apiKey=localStorage.getItem('tracker_apikey')||'';
+  if(!apiKey){
+    document.getElementById('ai-summary-content').innerHTML='<div class="ai-summary-text" style="color:var(--or);">⚠ No API key set. Go to Settings → AI Summary to add your Anthropic API key.</div>';
+    return;
+  }
   var box=document.getElementById('ai-summary-content');
   box.innerHTML='<div class="ai-summary-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:4px;">Generating your summary...</span></div>';
   var day=getDay(todayStr());
@@ -986,12 +1001,25 @@ async function generateAISummary(){
   var curW=wts.length?wts[wts.length-1].val:S.weight;
   var prompt='You are a supportive, knowledgeable fitness and nutrition coach. Give a brief, personalised daily summary for '+S.name+' ('+S.age+' yo, '+curW+'kg, goal: '+S.goal+'kg). Today is a '+(isGym?'GYM':'REST')+' day.\n\nMacros so far: Calories '+cal+'/'+calGoal+' kcal, Protein '+prot+'/'+protGoal+'g, Carbs '+carb+'/'+carbGoal+'g, Fat '+fat+'/'+fatGoal+'g.\nCalories burned: '+burned+' kcal. Deficit vs maintenance: '+(deficit>=0?'+':'')+Math.round(deficit)+' kcal.\n\nGive 3-4 sentences of honest, actionable, motivating feedback. Mention what they\'re doing well and what to focus on for the rest of the day. Keep it personal and direct. No bullet points.';
   try{
-    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':apiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:prompt}]})
+    });
     var data=await resp.json();
-    var text=(data.content&&data.content[0]&&data.content[0].text)||'Unable to generate summary right now.';
+    if(data.error){
+      box.innerHTML='<div class="ai-summary-text" style="color:var(--rd);">API Error: '+data.error.message+'</div>';
+      return;
+    }
+    var text=(data.content&&data.content[0]&&data.content[0].text)||'Unable to generate summary.';
     box.innerHTML='<div class="ai-badge">AI SUMMARY</div><div class="ai-summary-text">'+text+'</div>';
   }catch(e){
-    box.innerHTML='<div class="ai-summary-text" style="color:var(--mu);">Could not connect to AI. Check your internet connection and try again.</div>';
+    box.innerHTML='<div class="ai-summary-text" style="color:var(--mu);">Could not connect. Check your internet connection and try again.</div>';
   }
 }
 
@@ -1681,10 +1709,26 @@ function renderSettings(){
     gymCal:'s-gcal',gymProt:'s-gprot',gymCarb:'s-gcarb',gymFat:'s-gfat',
     restCal:'s-rcal',restProt:'s-rprot',restCarb:'s-rcarb',restFat:'s-rfat'};
   Object.keys(map).forEach(function(k){var el=document.getElementById(map[k]);if(el)el.value=S[k]||'';});
+  var keyEl=document.getElementById('s-apikey');
+  var storedKey=localStorage.getItem('tracker_apikey')||'';
+  if(keyEl)keyEl.value=storedKey;
+  var status=document.getElementById('s-apikey-status');
+  if(status){
+    if(storedKey.startsWith('sk-ant-')){status.style.color='var(--gn)';status.textContent='✓ API key saved';}
+    else if(storedKey.length){status.style.color='var(--or)';status.textContent='⚠ Key should start with sk-ant-';}
+    else{status.style.color='var(--mu)';status.textContent='No key saved';}
+  }
   initSettingsThemeGrid();
 }
 
-function liveSettingSave(){
+function saveApiKey(){
+  var key=document.getElementById('s-apikey').value.trim();
+  localStorage.setItem('tracker_apikey',key);
+  var status=document.getElementById('s-apikey-status');
+  if(key.startsWith('sk-ant-')){status.style.color='var(--gn)';status.textContent='✓ API key saved';}
+  else if(key.length>0){status.style.color='var(--or)';status.textContent='⚠ Key should start with sk-ant-';}
+  else{status.style.color='var(--mu)';status.textContent='No key saved';}
+}
   var S=D.settings;
   var map={name:'s-name',age:'s-age',height:'s-height',goal:'s-goal',maintenance:'s-maint',
     gymCal:'s-gcal',gymProt:'s-gprot',gymCarb:'s-gcarb',gymFat:'s-gfat',
