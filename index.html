@@ -276,21 +276,57 @@ textarea.inp{resize:vertical;min-height:80px;}
 
   <div class="ob-section">
     <div class="ob-section-title">Gym Day Macros</div>
-    <div class="ob-grid4">
-      <div class="field"><div class="lbl">Cal</div><input class="inp inp-sm" type="number" id="ob-gcal" placeholder="2500"></div>
-      <div class="field"><div class="lbl">Protein</div><input class="inp inp-sm" type="number" id="ob-gprot" placeholder="180"></div>
-      <div class="field"><div class="lbl">Carbs</div><input class="inp inp-sm" type="number" id="ob-gcarb" placeholder="250"></div>
-      <div class="field"><div class="lbl">Fat</div><input class="inp inp-sm" type="number" id="ob-gfat" placeholder="70"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+      <div class="lbl" style="text-align:center;">LOW</div>
+      <div class="lbl" style="text-align:center;">HIGH</div>
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+      <div class="lbl" style="width:56px;">Cal</div>
+      <input class="inp inp-sm" type="number" id="ob-gcal-lo" placeholder="2000">
+      <input class="inp inp-sm" type="number" id="ob-gcal-hi" placeholder="2200">
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+      <div class="lbl" style="width:56px;">Protein</div>
+      <input class="inp inp-sm" type="number" id="ob-gprot-lo" placeholder="160">
+      <input class="inp inp-sm" type="number" id="ob-gprot-hi" placeholder="180">
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+      <div class="lbl" style="width:56px;">Carbs</div>
+      <input class="inp inp-sm" type="number" id="ob-gcarb-lo" placeholder="200">
+      <input class="inp inp-sm" type="number" id="ob-gcarb-hi" placeholder="250">
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;">
+      <div class="lbl" style="width:56px;">Fat</div>
+      <input class="inp inp-sm" type="number" id="ob-gfat-lo" placeholder="60">
+      <input class="inp inp-sm" type="number" id="ob-gfat-hi" placeholder="75">
     </div>
   </div>
 
   <div class="ob-section">
     <div class="ob-section-title">Rest Day Macros</div>
-    <div class="ob-grid4">
-      <div class="field"><div class="lbl">Cal</div><input class="inp inp-sm" type="number" id="ob-rcal" placeholder="2000"></div>
-      <div class="field"><div class="lbl">Protein</div><input class="inp inp-sm" type="number" id="ob-rprot" placeholder="160"></div>
-      <div class="field"><div class="lbl">Carbs</div><input class="inp inp-sm" type="number" id="ob-rcarb" placeholder="180"></div>
-      <div class="field"><div class="lbl">Fat</div><input class="inp inp-sm" type="number" id="ob-rfat" placeholder="65"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+      <div class="lbl" style="text-align:center;">LOW</div>
+      <div class="lbl" style="text-align:center;">HIGH</div>
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+      <div class="lbl" style="width:56px;">Cal</div>
+      <input class="inp inp-sm" type="number" id="ob-rcal-lo" placeholder="1600">
+      <input class="inp inp-sm" type="number" id="ob-rcal-hi" placeholder="1800">
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+      <div class="lbl" style="width:56px;">Protein</div>
+      <input class="inp inp-sm" type="number" id="ob-rprot-lo" placeholder="140">
+      <input class="inp inp-sm" type="number" id="ob-rprot-hi" placeholder="160">
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+      <div class="lbl" style="width:56px;">Carbs</div>
+      <input class="inp inp-sm" type="number" id="ob-rcarb-lo" placeholder="150">
+      <input class="inp inp-sm" type="number" id="ob-rcarb-hi" placeholder="180">
+    </div>
+    <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;">
+      <div class="lbl" style="width:56px;">Fat</div>
+      <input class="inp inp-sm" type="number" id="ob-rfat-lo" placeholder="50">
+      <input class="inp inp-sm" type="number" id="ob-rfat-hi" placeholder="65">
     </div>
   </div>
 
@@ -370,7 +406,7 @@ textarea.inp{resize:vertical;min-height:80px;}
         <div class="lbl">Meal Slot</div>
         <select class="inp inp-sm" id="food-meal-sel">
           <option>Breakfast</option><option>Mid-Morning</option><option>Lunch</option>
-          <option>Evening</option><option>Dinner</option><option>Night</option>
+          <option>Afternoon</option><option>Dinner</option><option>Evening</option>
         </select>
       </div>
       <div class="row2">
@@ -563,22 +599,58 @@ textarea.inp{resize:vertical;min-height:80px;}
     <div class="settings-section">
       <div class="settings-title">Gym Day Macros</div>
       <div class="card">
-        <div class="row4">
-          <div class="field"><div class="lbl">Calories</div><input class="inp inp-sm" type="number" id="s-gcal" oninput="liveSettingSave()"></div>
-          <div class="field"><div class="lbl">Protein</div><input class="inp inp-sm" type="number" id="s-gprot" oninput="liveSettingSave()"></div>
-          <div class="field"><div class="lbl">Carbs</div><input class="inp inp-sm" type="number" id="s-gcarb" oninput="liveSettingSave()"></div>
-          <div class="field"><div class="lbl">Fat</div><input class="inp inp-sm" type="number" id="s-gfat" oninput="liveSettingSave()"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+          <div class="lbl" style="text-align:center;">LOW</div>
+          <div class="lbl" style="text-align:center;">HIGH</div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+          <div class="lbl" style="width:56px;">Cal</div>
+          <input class="inp inp-sm" type="number" id="s-gcal-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-gcal-hi" oninput="liveSettingSave()">
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+          <div class="lbl" style="width:56px;">Protein</div>
+          <input class="inp inp-sm" type="number" id="s-gprot-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-gprot-hi" oninput="liveSettingSave()">
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+          <div class="lbl" style="width:56px;">Carbs</div>
+          <input class="inp inp-sm" type="number" id="s-gcarb-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-gcarb-hi" oninput="liveSettingSave()">
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;">
+          <div class="lbl" style="width:56px;">Fat</div>
+          <input class="inp inp-sm" type="number" id="s-gfat-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-gfat-hi" oninput="liveSettingSave()">
         </div>
       </div>
     </div>
     <div class="settings-section">
       <div class="settings-title">Rest Day Macros</div>
       <div class="card">
-        <div class="row4">
-          <div class="field"><div class="lbl">Calories</div><input class="inp inp-sm" type="number" id="s-rcal" oninput="liveSettingSave()"></div>
-          <div class="field"><div class="lbl">Protein</div><input class="inp inp-sm" type="number" id="s-rprot" oninput="liveSettingSave()"></div>
-          <div class="field"><div class="lbl">Carbs</div><input class="inp inp-sm" type="number" id="s-rcarb" oninput="liveSettingSave()"></div>
-          <div class="field"><div class="lbl">Fat</div><input class="inp inp-sm" type="number" id="s-rfat" oninput="liveSettingSave()"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+          <div class="lbl" style="text-align:center;">LOW</div>
+          <div class="lbl" style="text-align:center;">HIGH</div>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+          <div class="lbl" style="width:56px;">Cal</div>
+          <input class="inp inp-sm" type="number" id="s-rcal-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-rcal-hi" oninput="liveSettingSave()">
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+          <div class="lbl" style="width:56px;">Protein</div>
+          <input class="inp inp-sm" type="number" id="s-rprot-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-rprot-hi" oninput="liveSettingSave()">
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;margin-bottom:6px;">
+          <div class="lbl" style="width:56px;">Carbs</div>
+          <input class="inp inp-sm" type="number" id="s-rcarb-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-rcarb-hi" oninput="liveSettingSave()">
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;align-items:center;">
+          <div class="lbl" style="width:56px;">Fat</div>
+          <input class="inp inp-sm" type="number" id="s-rfat-lo" oninput="liveSettingSave()">
+          <input class="inp inp-sm" type="number" id="s-rfat-hi" oninput="liveSettingSave()">
         </div>
       </div>
     </div>
@@ -731,8 +803,8 @@ var _lastGreeting='';
 // ============================================================
 var D = {
   settings:{name:'',age:'',height:'',weight:'',goal:'',maintenance:2400,
-    gymCal:2500,gymProt:180,gymCarb:250,gymFat:70,
-    restCal:2000,restProt:160,restCarb:180,restFat:65,
+    gymCalLo:2000,gymCalHi:2200,gymProtLo:160,gymProtHi:180,gymCarbLo:200,gymCarbHi:250,gymFatLo:60,gymFatHi:75,
+    restCalLo:1600,restCalHi:1800,restProtLo:140,restProtHi:160,restCarbLo:150,restCarbHi:180,restFatLo:50,restFatHi:65,
     theme:'vice'},
   days:{},
   weights:[],
@@ -814,14 +886,22 @@ function finishOnboarding(){
   D.settings.weight=document.getElementById('ob-weight').value;
   D.settings.goal=document.getElementById('ob-goal').value;
   D.settings.maintenance=parseFloat(document.getElementById('ob-maintenance').value)||2400;
-  D.settings.gymCal=parseFloat(document.getElementById('ob-gcal').value)||2500;
-  D.settings.gymProt=parseFloat(document.getElementById('ob-gprot').value)||180;
-  D.settings.gymCarb=parseFloat(document.getElementById('ob-gcarb').value)||250;
-  D.settings.gymFat=parseFloat(document.getElementById('ob-gfat').value)||70;
-  D.settings.restCal=parseFloat(document.getElementById('ob-rcal').value)||2000;
-  D.settings.restProt=parseFloat(document.getElementById('ob-rprot').value)||160;
-  D.settings.restCarb=parseFloat(document.getElementById('ob-rcarb').value)||180;
-  D.settings.restFat=parseFloat(document.getElementById('ob-rfat').value)||65;
+  D.settings.gymCalLo=parseFloat(document.getElementById('ob-gcal-lo').value)||2000;
+  D.settings.gymCalHi=parseFloat(document.getElementById('ob-gcal-hi').value)||2200;
+  D.settings.gymProtLo=parseFloat(document.getElementById('ob-gprot-lo').value)||160;
+  D.settings.gymProtHi=parseFloat(document.getElementById('ob-gprot-hi').value)||180;
+  D.settings.gymCarbLo=parseFloat(document.getElementById('ob-gcarb-lo').value)||200;
+  D.settings.gymCarbHi=parseFloat(document.getElementById('ob-gcarb-hi').value)||250;
+  D.settings.gymFatLo=parseFloat(document.getElementById('ob-gfat-lo').value)||60;
+  D.settings.gymFatHi=parseFloat(document.getElementById('ob-gfat-hi').value)||75;
+  D.settings.restCalLo=parseFloat(document.getElementById('ob-rcal-lo').value)||1600;
+  D.settings.restCalHi=parseFloat(document.getElementById('ob-rcal-hi').value)||1800;
+  D.settings.restProtLo=parseFloat(document.getElementById('ob-rprot-lo').value)||140;
+  D.settings.restProtHi=parseFloat(document.getElementById('ob-rprot-hi').value)||160;
+  D.settings.restCarbLo=parseFloat(document.getElementById('ob-rcarb-lo').value)||150;
+  D.settings.restCarbHi=parseFloat(document.getElementById('ob-rcarb-hi').value)||180;
+  D.settings.restFatLo=parseFloat(document.getElementById('ob-rfat-lo').value)||50;
+  D.settings.restFatHi=parseFloat(document.getElementById('ob-rfat-hi').value)||65;
   save();
   document.getElementById('onboard').style.display='none';
   document.getElementById('app').style.display='block';
@@ -924,19 +1004,15 @@ function renderHome(){
   document.getElementById('home-greeting').textContent=greeting+', '+S.name.toUpperCase()+'!';
   updateDayToggleBtn();
   document.getElementById('hdr-date').textContent=fmtDate(todayStr());
-  var calGoal=isGym?S.gymCal:S.restCal;
-  var protGoal=isGym?S.gymProt:S.restProt;
-  var carbGoal=isGym?S.gymCarb:S.restCarb;
-  var fatGoal=isGym?S.gymFat:S.restFat;
   var cal=Math.round(totalMacro(day,'cal'));
   var prot=Math.round(totalMacro(day,'prot'));
   var carb=Math.round(totalMacro(day,'carb'));
   var fat=Math.round(totalMacro(day,'fat'));
   document.getElementById('home-macros').innerHTML=makeMacroCards([
-    {label:'Calories',val:cal,goal:calGoal,unit:''},
-    {label:'Protein',val:prot,goal:protGoal,unit:'g'},
-    {label:'Carbs',val:carb,goal:carbGoal,unit:'g'},
-    {label:'Fat',val:fat,goal:fatGoal,unit:'g'}
+    {label:'Calories',val:cal,lo:isGym?S.gymCalLo:S.restCalLo,hi:isGym?S.gymCalHi:S.restCalHi,unit:''},
+    {label:'Protein',val:prot,lo:isGym?S.gymProtLo:S.restProtLo,hi:isGym?S.gymProtHi:S.restProtHi,unit:'g'},
+    {label:'Carbs',val:carb,lo:isGym?S.gymCarbLo:S.restCarbLo,hi:isGym?S.gymCarbHi:S.restCarbHi,unit:'g'},
+    {label:'Fat',val:fat,lo:isGym?S.gymFatLo:S.restFatLo,hi:isGym?S.gymFatHi:S.restFatHi,unit:'g'}
   ]);
   var burned=totalBurned(day);
   var deficit=S.maintenance+burned-cal;
@@ -957,9 +1033,22 @@ function renderHome(){
 
 function makeMacroCards(macros){
   return macros.map(function(m){
-    var pct=m.goal?Math.min(100,Math.round((m.val/m.goal)*100)):0;
-    var cls=pct>=100?'over':(pct>=85?'near':'ok');
-    return '<div class="mc '+cls+'"><div class="mc-val">'+m.val+'</div><div class="mc-label">'+m.label+'</div><div class="mc-goal">/ '+m.goal+m.unit+'</div><div class="mc-bar"><div class="mc-bar-fill" style="width:'+pct+'%"></div></div></div>';
+    var lo=m.lo||0;var hi=m.hi||0;
+    var pct=hi?Math.min(110,Math.round((m.val/hi)*100)):0;
+    // green = within range, orange = below low, red = over high
+    var cls=m.val>hi?'over':(m.val>=lo?'ok':'near');
+    var barPct=hi?Math.min(100,Math.round((m.val/hi)*100)):0;
+    // range marker position (lo/hi as %)
+    var loMark=hi?Math.round((lo/hi)*100):0;
+    return '<div class="mc '+cls+'">'
+      +'<div class="mc-val">'+m.val+'</div>'
+      +'<div class="mc-label">'+m.label+'</div>'
+      +'<div class="mc-goal">'+m.val+m.unit+' · '+lo+'–'+hi+m.unit+'</div>'
+      +'<div class="mc-bar" style="position:relative;">'
+        +'<div class="mc-bar-fill" style="width:'+barPct+'%"></div>'
+        +'<div style="position:absolute;top:-1px;left:'+loMark+'%;width:2px;height:calc(100% + 2px);background:rgba(255,255,255,0.3);border-radius:1px;"></div>'
+      +'</div>'
+      +'</div>';
   }).join('');
 }
 
@@ -975,15 +1064,11 @@ function generateAISummary(){
   var carb=Math.round(totalMacro(day,'carb'));
   var fat=Math.round(totalMacro(day,'fat'));
   var burned=totalBurned(day);
-  var calGoal=isGym?S.gymCal:S.restCal;
-  var protGoal=isGym?S.gymProt:S.restProt;
-  var carbGoal=isGym?S.gymCarb:S.restCarb;
-  var fatGoal=isGym?S.gymFat:S.restFat;
+  var calLo=isGym?S.gymCalLo:S.restCalLo; var calHi=isGym?S.gymCalHi:S.restCalHi;
+  var protLo=isGym?S.gymProtLo:S.restProtLo; var protHi=isGym?S.gymProtHi:S.restProtHi;
+  var carbLo=isGym?S.gymCarbLo:S.restCarbLo; var carbHi=isGym?S.gymCarbHi:S.restCarbHi;
+  var fatLo=isGym?S.gymFatLo:S.restFatLo; var fatHi=isGym?S.gymFatHi:S.restFatHi;
   var deficit=S.maintenance+burned-cal;
-  var calPct=calGoal?Math.round((cal/calGoal)*100):0;
-  var protPct=protGoal?Math.round((prot/protGoal)*100):0;
-  var carbPct=carbGoal?Math.round((carb/carbGoal)*100):0;
-  var fatPct=fatGoal?Math.round((fat/fatGoal)*100):0;
   var wts=(D.weights||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
   var curW=wts.length?wts[wts.length-1].val:parseFloat(S.weight)||0;
   var goalW=parseFloat(S.goal)||0;
@@ -1001,31 +1086,34 @@ function generateAISummary(){
   }
 
   // Calorie status
-  if(calPct>=100){
-    if(calPct>=115) lines.push('You\'ve gone over your calorie goal by '+(cal-calGoal)+' kcal — be mindful with the rest of the '+dayPart+'.');
-    else lines.push('Calories are right on target at '+cal+'/'+calGoal+' kcal — solid.');
+  if(cal>calHi){
+    lines.push('You\'ve gone over your calorie range by '+(cal-calHi)+' kcal — be mindful with the rest of the '+dayPart+'.');
+  } else if(cal>=calLo){
+    lines.push('Calories are right in your target range at '+cal+' kcal ('+calLo+'–'+calHi+') — on track.');
   } else {
-    var calLeft=calGoal-cal;
-    if(calPct>=75) lines.push('Almost at your calorie goal — '+calLeft+' kcal to go.');
-    else lines.push('You\'re at '+calPct+'% of your calorie goal ('+cal+'/'+calGoal+' kcal) with '+calLeft+' kcal remaining.');
+    var calLeft=calLo-cal;
+    if(cal>=calLo*0.75) lines.push('Almost in your calorie range — '+calLeft+' kcal to hit the lower end of '+calLo+'–'+calHi+'.');
+    else lines.push('You\'re at '+cal+' kcal vs your '+calLo+'–'+calHi+' kcal target range with plenty left to fill.');
   }
 
-  // Protein — most important macro
-  if(protPct>=100){
-    lines.push('Protein is nailed at '+prot+'g — great work.');
+  // Protein
+  if(prot>protHi){
+    lines.push('Protein is over your range at '+prot+'g vs '+protLo+'–'+protHi+'g — not a problem but worth noting.');
+  } else if(prot>=protLo){
+    lines.push('Protein is nailed — '+prot+'g sits right in your '+protLo+'–'+protHi+'g range.');
   } else {
-    var protLeft=protGoal-prot;
-    if(protPct>=75) lines.push('Protein is close — just '+protLeft+'g to go to hit your '+protGoal+'g target.');
-    else if(protPct>=40) lines.push('Protein needs attention — '+prot+'g logged out of '+protGoal+'g. Try adding a high-protein meal or shake.');
-    else lines.push('Protein is low at '+prot+'g vs your '+protGoal+'g goal — prioritise protein in your next meal.');
+    var protLeft=protLo-prot;
+    if(prot>=protLo*0.75) lines.push('Protein is close — '+protLeft+'g to go to hit your '+protLo+'g minimum.');
+    else if(prot>=protLo*0.4) lines.push('Protein needs attention at '+prot+'g vs your '+protLo+'–'+protHi+'g target — add a high-protein meal or shake.');
+    else lines.push('Protein is low at '+prot+'g — prioritise it in your next meal, target is '+protLo+'–'+protHi+'g.');
   }
 
   // Carbs
-  if(carbPct>115) lines.push('Carbs are over your goal ('+carb+'g vs '+carbGoal+'g target).');
-  else if(carbPct>=85&&carbPct<=115) lines.push('Carbs are on track at '+carb+'g.');
+  if(carb>carbHi) lines.push('Carbs are over your range ('+carb+'g vs '+carbLo+'–'+carbHi+'g).');
+  else if(carb>=carbLo) lines.push('Carbs are on track at '+carb+'g.');
 
   // Fat
-  if(fatPct>120) lines.push('Fat is running high at '+fat+'g vs your '+fatGoal+'g target — watch added fats for the rest of the day.');
+  if(fat>fatHi) lines.push('Fat is running high at '+fat+'g vs your '+fatLo+'–'+fatHi+'g range — watch added fats for the rest of the day.');
 
   // Deficit
   if(burned>0){
@@ -1072,12 +1160,12 @@ function renderFoodLog(){
   var carb=Math.round(totalMacro(day,'carb'));
   var fat=Math.round(totalMacro(day,'fat'));
   document.getElementById('food-macros').innerHTML=makeMacroCards([
-    {label:'Calories',val:cal,goal:isGym?S.gymCal:S.restCal,unit:''},
-    {label:'Protein',val:prot,goal:isGym?S.gymProt:S.restProt,unit:'g'},
-    {label:'Carbs',val:carb,goal:isGym?S.gymCarb:S.restCarb,unit:'g'},
-    {label:'Fat',val:fat,goal:isGym?S.gymFat:S.restFat,unit:'g'}
+    {label:'Calories',val:cal,lo:isGym?S.gymCalLo:S.restCalLo,hi:isGym?S.gymCalHi:S.restCalHi,unit:''},
+    {label:'Protein',val:prot,lo:isGym?S.gymProtLo:S.restProtLo,hi:isGym?S.gymProtHi:S.restProtHi,unit:'g'},
+    {label:'Carbs',val:carb,lo:isGym?S.gymCarbLo:S.restCarbLo,hi:isGym?S.gymCarbHi:S.restCarbHi,unit:'g'},
+    {label:'Fat',val:fat,lo:isGym?S.gymFatLo:S.restFatLo,hi:isGym?S.gymFatHi:S.restFatHi,unit:'g'}
   ]);
-  var MEALS=['Breakfast','Mid-Morning','Lunch','Evening','Dinner','Night'];
+  var MEALS=['Breakfast','Mid-Morning','Lunch','Afternoon','Dinner','Evening'];
   var groups={};
   (day.foods||[]).forEach(function(f,i){
     if(!groups[f.meal])groups[f.meal]=[];
@@ -1232,6 +1320,19 @@ function getSessionProgressFromLog(si,date){
   return 'none';
 }
 
+function getLastSessionLog(si,ei,beforeDate){
+  // Find the most recent date before beforeDate where this session+exercise has logged done sets
+  var dates=Object.keys(D.workoutLog).filter(function(d){
+    return d<beforeDate && (D.workoutLog[d][si]||{})[ei];
+  }).sort().reverse();
+  for(var i=0;i<dates.length;i++){
+    var sets=((D.workoutLog[dates[i]][si]||{})[ei]||{}).sets||[];
+    var doneSets=sets.filter(function(s){return s.done&&(s.weight||s.reps);});
+    if(doneSets.length)return {date:dates[i],sets:doneSets};
+  }
+  return null;
+}
+
 function renderGymSession(si,date){
   var sess=D.program[si];
   if(!sess||!sess.exercises.length)return '<div class="empty">No exercises in this session.</div>';
@@ -1242,16 +1343,29 @@ function renderGymSession(si,date){
     var exLog=sessLog[ei]||{sets:[]};
     var wType=(D.weightTypes[si]||{})[ei]||'total';
     var allDone=exLog.sets.filter(function(s){return s.done;}).length>=ex.sets;
+    var last=getLastSessionLog(si,ei,date);
     html+='<div class="ex-card'+(allDone?' all-done':'')+'" id="gc-'+si+'-'+ei+'">';
     html+='<div class="ex-card-hdr"><div><div class="ex-card-name">'+ex.name+'</div><div class="ex-card-muscle">'+ex.muscle+' · '+ex.sets+'×'+ex.reps+'</div></div><button class="wt-type-btn" onclick="toggleWeightType('+si+','+ei+')">'+(wType==='per-side'?'Per Side':'Total')+'</button></div>';
+    // Last session hint
+    if(last){
+      var setStrs=last.sets.map(function(s,i){return 'Set '+(i+1)+': '+(s.reps||'?')+' reps @ '+(s.weight||'?')+'kg';}).join(' · ');
+      html+='<div style="background:var(--bg);border:1px solid var(--bd);border-radius:5px;padding:6px 10px;margin-bottom:8px;font-family:var(--mono);font-size:10px;line-height:1.6;">';
+      html+='<span style="color:var(--ac);letter-spacing:.5px;text-transform:uppercase;font-size:9px;">Last: '+fmtDate(last.date)+'</span><br>';
+      html+='<span style="color:var(--mu);">'+setStrs+'</span>';
+      html+='</div>';
+    }
     html+='<div style="display:grid;grid-template-columns:28px 1fr 1fr 80px;gap:4px;margin-bottom:4px;">';
     html+='<div></div><div class="set-label">REPS</div><div class="set-label">KG '+(wType==='per-side'?'/ SIDE':'TOTAL')+'</div><div></div></div>';
     for(var s=0;s<ex.sets;s++){
       var setData=exLog.sets[s]||{reps:'',weight:'',done:false};
+      // use last session weight as placeholder if no data yet
+      var lastSet=last?last.sets[s]:null;
+      var repsPh=lastSet?lastSet.reps:ex.reps;
+      var wtPh=lastSet?lastSet.weight:'kg';
       html+='<div class="set-row">';
       html+='<div class="set-num">'+(s+1)+'</div>';
-      html+='<input class="set-inp" type="number" value="'+setData.reps+'" placeholder="'+ex.reps+'" onchange="logSet('+si+','+ei+','+s+',\'reps\',this.value)">';
-      html+='<input class="set-inp" type="number" value="'+setData.weight+'" placeholder="kg" step="0.5" onchange="logSet('+si+','+ei+','+s+',\'weight\',this.value)">';
+      html+='<input class="set-inp" type="number" value="'+setData.reps+'" placeholder="'+repsPh+'" onchange="logSet('+si+','+ei+','+s+',\'reps\',this.value)">';
+      html+='<input class="set-inp" type="number" value="'+setData.weight+'" placeholder="'+wtPh+'" step="0.5" onchange="logSet('+si+','+ei+','+s+',\'weight\',this.value)">';
       html+='<button class="set-log-btn'+(setData.done?' logged':'')+'" onclick="toggleSetDone('+si+','+ei+','+s+')">'+(setData.done?'✓ Done':'Log')+'</button>';
       html+='</div>';
     }
@@ -1626,9 +1740,13 @@ function buildExport(type){
     var fat=Math.round(totalMacro(day,'fat'));
     var burned=totalBurned(day);
     var deficit=S.maintenance+burned-cal;
-    var calGoal=isGym?S.gymCal:S.restCal;
+    var calGoal=(isGym?S.gymCalLo:S.restCalLo)+'-'+(isGym?S.gymCalHi:S.restCalHi);
     var lines=['=== '+S.name.toUpperCase()+' TRACKER · '+fmtDate(date).toUpperCase()+' ['+(isGym?'GYM':'REST')+' DAY] ===',''];
-    lines.push('MACROS:','  Calories: '+cal+' / '+calGoal+' kcal','  Protein:  '+prot+'g / '+(isGym?S.gymProt:S.restProt)+'g','  Carbs:    '+carb+'g / '+(isGym?S.gymCarb:S.restCarb)+'g','  Fat:      '+fat+'g / '+(isGym?S.gymFat:S.restFat)+'g','');
+    lines.push('MACROS:',
+      '  Calories: '+cal+' / '+calGoal+' kcal',
+      '  Protein:  '+prot+'g / '+(isGym?S.gymProtLo:S.restProtLo)+'-'+(isGym?S.gymProtHi:S.restProtHi)+'g',
+      '  Carbs:    '+carb+'g / '+(isGym?S.gymCarbLo:S.restCarbLo)+'-'+(isGym?S.gymCarbHi:S.restCarbHi)+'g',
+      '  Fat:      '+fat+'g / '+(isGym?S.gymFatLo:S.restFatLo)+'-'+(isGym?S.gymFatHi:S.restFatHi)+'g','');
     lines.push('DEFICIT:','  Maintenance: '+S.maintenance+' kcal','  Calories Burned: '+burned+' kcal','  Deficit / Surplus: '+(deficit>=0?'+':'')+Math.round(deficit)+' kcal','');
     var groups={};(day.foods||[]).forEach(function(f){if(!groups[f.meal])groups[f.meal]=[];groups[f.meal].push(f);});
     var meals=Object.keys(groups);
@@ -1742,18 +1860,15 @@ function importJSON(input){
 function renderSettings(){
   var S=D.settings;
   var map={name:'s-name',age:'s-age',height:'s-height',goal:'s-goal',maintenance:'s-maint',
-    gymCal:'s-gcal',gymProt:'s-gprot',gymCarb:'s-gcarb',gymFat:'s-gfat',
-    restCal:'s-rcal',restProt:'s-rprot',restCarb:'s-rcarb',restFat:'s-rfat'};
+    gymCalLo:'s-gcal-lo',gymCalHi:'s-gcal-hi',
+    gymProtLo:'s-gprot-lo',gymProtHi:'s-gprot-hi',
+    gymCarbLo:'s-gcarb-lo',gymCarbHi:'s-gcarb-hi',
+    gymFatLo:'s-gfat-lo',gymFatHi:'s-gfat-hi',
+    restCalLo:'s-rcal-lo',restCalHi:'s-rcal-hi',
+    restProtLo:'s-rprot-lo',restProtHi:'s-rprot-hi',
+    restCarbLo:'s-rcarb-lo',restCarbHi:'s-rcarb-hi',
+    restFatLo:'s-rfat-lo',restFatHi:'s-rfat-hi'};
   Object.keys(map).forEach(function(k){var el=document.getElementById(map[k]);if(el)el.value=S[k]||'';});
-  var keyEl=document.getElementById('s-apikey');
-  var storedKey=localStorage.getItem('tracker_apikey')||'';
-  if(keyEl)keyEl.value=storedKey;
-  var status=document.getElementById('s-apikey-status');
-  if(status){
-    if(storedKey.startsWith('sk-ant-')){status.style.color='var(--gn)';status.textContent='✓ API key saved';}
-    else if(storedKey.length){status.style.color='var(--or)';status.textContent='⚠ Key should start with sk-ant-';}
-    else{status.style.color='var(--mu)';status.textContent='No key saved';}
-  }
   initSettingsThemeGrid();
 }
 
@@ -1768,8 +1883,14 @@ function saveApiKey(){
 function liveSettingSave(){
   var S=D.settings;
   var map={name:'s-name',age:'s-age',height:'s-height',goal:'s-goal',maintenance:'s-maint',
-    gymCal:'s-gcal',gymProt:'s-gprot',gymCarb:'s-gcarb',gymFat:'s-gfat',
-    restCal:'s-rcal',restProt:'s-rprot',restCarb:'s-rcarb',restFat:'s-rfat'};
+    gymCalLo:'s-gcal-lo',gymCalHi:'s-gcal-hi',
+    gymProtLo:'s-gprot-lo',gymProtHi:'s-gprot-hi',
+    gymCarbLo:'s-gcarb-lo',gymCarbHi:'s-gcarb-hi',
+    gymFatLo:'s-gfat-lo',gymFatHi:'s-gfat-hi',
+    restCalLo:'s-rcal-lo',restCalHi:'s-rcal-hi',
+    restProtLo:'s-rprot-lo',restProtHi:'s-rprot-hi',
+    restCarbLo:'s-rcarb-lo',restCarbHi:'s-rcarb-hi',
+    restFatLo:'s-rfat-lo',restFatHi:'s-rfat-hi'};
   Object.keys(map).forEach(function(k){
     var el=document.getElementById(map[k]);if(!el)return;
     S[k]=isNaN(parseFloat(el.value))?el.value:parseFloat(el.value);
