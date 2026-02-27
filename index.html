@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -22,7 +22,8 @@
 .theme-light{--bg:#f5f5ff;--s1:#ebebff;--s2:#e0e0fa;--s3:#d5d5f5;--tx:#0a0a20;--mu:#8080b0;--bd:#c8c8e8;--ac:#ff2d78;--ac2:#ff6ec7;--gn:#00b894;--cy:#0984e3;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;}
-body{background:var(--bg);color:var(--tx);font-family:var(--font);font-size:14px;overflow-x:hidden;-webkit-font-smoothing:antialiased;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+body{background:var(--bg);color:var(--tx);font-family:var(--font);font-size:14px;overflow-x:hidden;-webkit-font-smoothing:antialiased;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;}
+button,input,select,textarea{touch-action:manipulation;}
 input,select,textarea,button{font-family:var(--font);font-size:14px;color:var(--tx);}
 button{cursor:pointer;}
 
