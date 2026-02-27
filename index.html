@@ -1206,6 +1206,7 @@ async function generateAISummaryGemini(key){
     box.innerHTML='<div class="ai-badge">AI SUMMARY</div><div class="ai-summary-text">'+text+'</div>';
   }catch(e){
     generateAISummaryRuleBased();
+  }
 }
 
 function generateAISummaryRuleBased(){
@@ -1230,14 +1231,14 @@ function generateAISummaryRuleBased(){
   var dayPart=h<12?'morning':h<17?'afternoon':'evening';
   var lines=[];
 
-  function generateAISummaryRuleBased(){
+  // Nothing logged yet
+  if(cal===0&&prot===0){
     if(isGym) lines.push('Gym day — nothing logged yet. Get your pre-workout nutrition in and start strong.');
     else lines.push('Rest day — nothing logged yet. Stay consistent and get your first meal in.');
     document.getElementById('ai-summary-content').innerHTML='<div class="ai-badge">DAILY SUMMARY</div><div class="ai-summary-text">'+lines.join(' ')+'</div>';
     return;
   }
 
-  // Calorie status
   if(cal>calHi){
     lines.push('You\'ve gone over your calorie range by '+(cal-calHi)+' kcal — be mindful with the rest of the '+dayPart+'.');
   } else if(cal>=calLo){
