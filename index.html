@@ -449,13 +449,30 @@ textarea.inp{resize:vertical;min-height:80px;}
     <div class="sess-tabs" id="gym-sess-tabs"></div>
     <div id="gym-sess-panels"></div>
     <div class="card" style="margin-top:12px;">
-      <div class="card-title">Extra Exercise & Calories Burned</div>
+      <div class="card-title">Activity Log</div>
       <div id="gym-extra-list" style="margin-bottom:8px;"></div>
       <div class="row2">
-        <div class="field"><div class="lbl">Activity</div><input class="inp inp-sm" id="gym-extra-name" placeholder="e.g. Warm-up"></div>
-        <div class="field"><div class="lbl">Calories Burned</div><input class="inp inp-sm" type="number" id="gym-extra-cal" placeholder="0"></div>
+        <div class="field"><div class="lbl">Activity</div><input class="inp inp-sm" id="gym-extra-name" placeholder="e.g. Morning run"></div>
+        <div class="field"><div class="lbl">Category</div>
+          <select class="inp inp-sm" id="gym-extra-cat">
+            <option value="Gym">Gym</option>
+            <option value="Cardio">Cardio</option>
+            <option value="Sport">Sport</option>
+            <option value="Walk">Walk</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
       </div>
-      <button class="btn btn-sm" onclick="addGymExtra()">Add</button>
+      <div class="row2">
+        <div class="field"><div class="lbl">Calories Burned</div><input class="inp inp-sm" type="number" id="gym-extra-cal" placeholder="0"></div>
+        <div class="field" style="justify-content:flex-end;padding-top:18px;">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="gym-extra-include" style="accent-color:var(--ac);" checked>
+            <label for="gym-extra-include" style="font-size:11px;color:var(--mu);cursor:pointer;line-height:1.3;">Include in deficit<br><span style="font-size:10px;color:var(--s3);">Uncheck if logged in Health</span></label>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-sm" onclick="addGymExtra()">Add Activity</button>
     </div>
   </div>
 
@@ -949,10 +966,12 @@ function fmtDate(s){var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);retur
 function save(){try{localStorage.setItem('tracker_v1',JSON.stringify(D));}catch(e){}}
 function load(){try{var s=localStorage.getItem('tracker_v1');if(s){D=JSON.parse(s);if(!D.foodLibrary)D.foodLibrary=[];if(!D.program)D.program=[];if(!D.customExercises)D.customExercises=[];if(!D.workoutLog)D.workoutLog={};if(!D.weightTypes)D.weightTypes={};if(!D.health)D.health={};}}catch(e){}}
 function getDay(date){if(!D.days[date])D.days[date]={isGymDay:false,foods:[],extras:[],notes:''};return D.days[date];}
+function hasFood(day){return day&&day.foods&&day.foods.length>0;}
+function loggedDates(){return Object.keys(D.days).filter(function(d){return hasFood(D.days[d]);}).sort();}
 function totalMacro(day,key){if(!day||!day.foods)return 0;return day.foods.reduce(function(a,f){return a+(parseFloat(f[key])||0);},0);}
 function totalBurned(day,date){
   var d=date||curDate;
-  var gymCal=(!day||!day.extras)?0:day.extras.reduce(function(a,e){return a+(parseFloat(e.cal)||0);},0);
+  var gymCal=(!day||!day.extras)?0:day.extras.filter(function(e){return e.includeInDeficit===true;}).reduce(function(a,e){return a+(parseFloat(e.cal)||0);},0);
   return gymCal+(getHealthActiveCal(d)||0);
 }
 
@@ -1197,7 +1216,7 @@ async function generateAISummaryGemini(key){
   var curW=wts.length?wts[wts.length-1].val:parseFloat(S.weight)||0;
   var prompt='You are a supportive fitness and nutrition coach. Give a brief personalised daily summary for '+S.name+' ('+curW+'kg, goal: '+S.goal+'kg). Today is a '+(isGym?'GYM':'REST')+' day.\n\nMacros logged: Calories '+cal+' (target '+calLo+'–'+calHi+' kcal), Protein '+prot+'g (target '+protLo+'–'+protHi+'g), Carbs '+carb+'g, Fat '+fat+'g. Calories burned: '+burned+' kcal. Deficit vs maintenance: '+(deficit>=0?'+':'')+Math.round(deficit)+' kcal.\n\nGive 3-4 sentences of honest, motivating feedback. What are they doing well? What should they focus on? Be direct and personal. No bullet points.';
   try{
-    var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+key,{
+    var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:300}})
     });
@@ -1459,7 +1478,7 @@ async function analyseImageWithGemini(dataUrl){
   var key=getGeminiKey();
   var prompt='Look at this image. It may show a nutrition label, packaged food, a meal, or a food item. Extract the nutritional information and respond ONLY with a JSON object in this exact format, no other text:\n{"name":"product or food name","cal":000,"prot":0.0,"carb":0.0,"fat":0.0,"serving":"serving size e.g. 100g or per bar","notes":"any useful notes e.g. values are per 100g"}\n\nRules:\n- cal = calories in kcal\n- prot = protein in grams\n- carb = total carbohydrates in grams\n- fat = total fat in grams\n- Use per-serving values if shown, otherwise per 100g\n- If you cannot find nutrition info, return {"error":"reason"}';
   try{
-    var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+key,{
+    var resp=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -1787,21 +1806,32 @@ function toggleWeightType(si,ei){
 function addGymExtra(){
   var name=document.getElementById('gym-extra-name').value.trim();
   var cal=parseFloat(document.getElementById('gym-extra-cal').value)||0;
+  var cat=document.getElementById('gym-extra-cat').value||'Other';
+  var include=document.getElementById('gym-extra-include').checked;
   if(!name)return;
-  getDay(curDate).extras.push({name:name,cal:cal});
+  getDay(curDate).extras.push({name:name,cal:cal,cat:cat,includeInDeficit:include});
   save();
   document.getElementById('gym-extra-name').value='';
   document.getElementById('gym-extra-cal').value='';
+  document.getElementById('gym-extra-include').checked=true;
   renderGymExtras();
+  renderHome();
 }
 
 function renderGymExtras(){
   var day=getDay(curDate);
   var list=document.getElementById('gym-extra-list');
   if(!list)return;
-  if(!day.extras||!day.extras.length){list.innerHTML='<div style="color:var(--mu);font-size:12px;">None logged.</div>';return;}
+  if(!day.extras||!day.extras.length){list.innerHTML='<div style="color:var(--mu);font-size:12px;">No activities logged.</div>';return;}
   list.innerHTML=day.extras.map(function(e,i){
-    return '<div class="food-row"><div class="food-name">'+e.name+'</div><div class="food-macros" style="color:var(--ac);">'+e.cal+' kcal burned</div><button class="food-del" onclick="delExtra('+i+')">×</button></div>';
+    var catBadge='<span style="font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:3px;background:rgba(255,45,120,.12);color:var(--ac);margin-right:4px;">'+( e.cat||'Other')+'</span>';
+    var defBadge=e.includeInDeficit
+      ?'<span style="font-family:var(--mono);font-size:9px;color:var(--gn);">+deficit</span>'
+      :'<span style="font-family:var(--mono);font-size:9px;color:var(--mu);">health tracked</span>';
+    return '<div class="food-row">'
+      +'<div class="food-name">'+catBadge+e.name+'<br><span style="font-size:10px;color:var(--mu);">'+e.cal+' kcal · '+defBadge+'</span></div>'
+      +'<button class="food-del" onclick="delExtra('+i+')">×</button>'
+      +'</div>';
   }).join('');
 }
 
@@ -1994,7 +2024,7 @@ function getChartColor(alpha){return 'rgba(255,45,120,'+alpha+')';}
 function getCyColor(alpha){return 'rgba(30,235,255,'+alpha+')';}
 
 function renderCharts(){
-  var dates=Object.keys(D.days).sort();
+  var dates=loggedDates();
   if(!dates.length){return;}
   var labels=[];var values=[];
   var today=new Date();
@@ -2019,7 +2049,8 @@ function renderCharts(){
     var wkeys=Object.keys(weeks).sort().slice(-12);
     labels=wkeys.map(function(k){return 'W'+k.split('-')[1];});
     values=wkeys.map(function(k){
-      var ds=weeks[k];
+      var ds=weeks[k].filter(function(d){return hasFood(D.days[d]);});
+      if(!ds.length)return null;
       var sum=ds.reduce(function(a,d){
         var day=D.days[d];
         if(_chartMetric==='cal')return a+Math.round(totalMacro(day,'cal'));
@@ -2035,7 +2066,8 @@ function renderCharts(){
     var mkeys=Object.keys(months).sort().slice(-12);
     labels=mkeys.map(function(k){var p=k.split('-');return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1]-1]+' '+p[0].slice(2);});
     values=mkeys.map(function(k){
-      var ds=months[k];
+      var ds=months[k].filter(function(d){return hasFood(D.days[d]);});
+      if(!ds.length)return null;
       var sum=ds.reduce(function(a,d){
         var day=D.days[d];
         if(_chartMetric==='cal')return a+Math.round(totalMacro(day,'cal'));
@@ -2051,7 +2083,8 @@ function renderCharts(){
     var ykeys=Object.keys(years).sort();
     labels=ykeys;
     values=ykeys.map(function(k){
-      var ds=years[k];
+      var ds=years[k].filter(function(d){return hasFood(D.days[d]);});
+      if(!ds.length)return null;
       var sum=ds.reduce(function(a,d){
         var day=D.days[d];
         if(_chartMetric==='cal')return a+Math.round(totalMacro(day,'cal'));
@@ -2124,13 +2157,13 @@ function buildExport(type){
     if(day.extras&&day.extras.length){lines.push('EXERCISE:');day.extras.forEach(function(e){lines.push('  '+e.name+' — '+e.cal+' kcal burned');});lines.push('');}
     text=lines.join('\n');
   } else if(type==='week'){
-    var recent=Object.keys(D.days).sort().slice(-7);
+    var recent=loggedDates().slice(-7);
     var lines=['=== '+S.name.toUpperCase()+' TRACKER · WEEKLY SUMMARY ===',''];
     var wts=D.weights.slice().sort(function(a,b){return a.date.localeCompare(b.date);});
     if(wts.length){var cw=wts[wts.length-1];lines.push('WEIGHT: '+cw.val+'kg (as of '+fmtDate(cw.date)+')','Start: '+(S.weight||'?')+'kg · Goal: '+(S.goal||'?')+'kg','');}
     var totCal=0,totProt=0,days7=0;
     recent.forEach(function(d){
-      var day=D.days[d];totCal+=totalMacro(day,'cal');totProt+=totalMacro(day,'prot');days7++;
+      var day=D.days[d];if(!hasFood(day))return;totCal+=totalMacro(day,'cal');totProt+=totalMacro(day,'prot');days7++;
     });
     if(days7){lines.push('7-DAY AVERAGES:','  Avg Calories: '+Math.round(totCal/days7)+' kcal','  Avg Protein:  '+Math.round(totProt/days7)+'g','');}
     lines.push('DAILY BREAKDOWN:','');
@@ -2172,7 +2205,7 @@ function buildExport(type){
       Object.keys(cw.scan).forEach(function(k){if(cw.scan[k])lines.push('  '+scanLabels[k]+': '+cw.scan[k]);});
       lines.push('');
     }
-    var recent7=Object.keys(D.days).sort().slice(-7);
+    var recent7=loggedDates().slice(-7);
     if(recent7.length){
       var avgCal=Math.round(recent7.reduce(function(a,d){return a+totalMacro(D.days[d],'cal');},0)/recent7.length);
       var avgProt=Math.round(recent7.reduce(function(a,d){return a+totalMacro(D.days[d],'prot');},0)/recent7.length);
